@@ -25,6 +25,9 @@ const CLASSROOM_LATLNG = leaflet.latLng(
 const WIN_VALUE_TOKEN = 256; //256
 const INTERACTION_LIMIT = 3; //test this out 4 might work better
 
+const STYLE_DEFAULT = { color: "#3388ff", weight: 3, fillOpacity: 0.2 }; // Standard Blue
+const STYLE_NEARBY = { color: "#ffd700", weight: 5, fillOpacity: 0.5 }; // yellow when nearby
+
 // ========== UI Elements ===================
 
 const controlPanelDiv = document.createElement("div");
@@ -332,6 +335,7 @@ function updateGrid() {
           drawCell(i, j, value);
         }
       }
+      updateCellColor(i, j);
     }
   }
 }
@@ -373,9 +377,20 @@ function updateCell(i: number, j: number, newValue: number | null) {
   removeCell(i, j);
   if (newValue !== null) {
     drawCell(i, j, newValue);
+    updateCellColor(i, j);
   }
 }
-
+function updateCellColor(i: number, j: number) {
+  const key = cellKey(i, j);
+  const rect = cellRectangles.get(key);
+  if (rect) {
+    if (isNearby(i, j)) {
+      rect.setStyle(STYLE_NEARBY); // Yellow
+    } else {
+      rect.setStyle(STYLE_DEFAULT); // Blue
+    }
+  }
+}
 // =============== Handlers =====================
 
 function handleCellClick(i: number, j: number) {
